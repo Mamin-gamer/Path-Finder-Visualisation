@@ -3,14 +3,12 @@
 import os
 os.environ['PYGAME_HIDE_SUPPORT_PROMPT'] = "hide"
 import time
-from test1 import *
 #trying to import pygame module, otherwise error will occure
 try:
     import pygame
     pygame.font.init()
 except Exception as e:
     raise e
-from test1 import *
 #setting constants for all purpose
 FPS = 120
 MAIN_BUTTON_WIDTH = 150
@@ -200,7 +198,6 @@ def display_root(current_node):
         current_node = current_node.parent
 
     pygame.display.update()
-    # print(1111111111111111111111111)
     return length
 
 #function to get posiible locations to place children
@@ -468,15 +465,14 @@ def main_game(way):
                     end = time.time()
                     #sets the ending time
 
-                    #tries to print length of path with its time, otherwise it will pring time only
-                    try:
-                       print(f'Path found! It was {round(length*10, 3)} units away from the start node. Solution was found in {round(end - start, 3)} seconds')
-                    except:
+                    if length == -2:
                         print(f'No path found in {round(end-start, 3)} seconds')
-
+                    elif length == -1:
+                        print('Program was closed while running')
+                    else:
+                        print(f'Path found! It was {round(length*10, 3)} units away from the start node. Solution was found in {round(end - start, 3)} seconds')
 
                     pygame.event.clear()
-                    # print('main_game after spacebar')
                     grid.display(win)
 
 
@@ -541,7 +537,6 @@ def main_game(way):
             pygame.display.update()
     
 
-@profile
 #function for A* algoritm
 def Astar(win):
     clock = pygame.time.Clock()
@@ -563,14 +558,14 @@ def Astar(win):
                 solve = False
                 grid.clear(win, walls = True)
                 pygame.display.update()
-                return
+                return -1
 
         clock.tick(FPS)
         #early exit
         if not open_list:
             # print('No path found')
             solve = False
-            return 
+            return -2
 
         #sets current node with min function (O(1), faster than linear search) depending on total cost
         current_node = min(open_list, key = lambda x: x.fCost)
@@ -634,14 +629,14 @@ def Dijkstra(win):
             if event.type == pygame.QUIT:
                 solve = False
                 grid.clear(win, walls = True)
-                return
+                return -1
 
-        clock.tick(FPS*2)
+        clock.tick(FPS)
         #if nothing is in the open list, where children should be, algorithm ends
         if not open_list:
             # print('No path found')
             solve = False
-            return
+            return -2
 
         current_node = min(open_list, key = lambda x: x.gCost)
         current_index = open_list.index(current_node)
